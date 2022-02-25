@@ -64,7 +64,7 @@ export default {
       stompClient: undefined,
       uuid: undefined,
       clientId: undefined,
-      chatTopic: '/chat'
+      chatTopic: '/many-chat'
     }
   },
   mounted () {
@@ -90,6 +90,8 @@ export default {
 
       const headers = {
 
+uuid:self.uuid,
+clientId:self.clientId
       }
       self.stompClient.connect(headers, function (resp) {
         self.successCallBack(resp)
@@ -102,15 +104,15 @@ export default {
       const redata = JSON.parse(e.data)
       console.log(redata)
     },
-    successCallBack (resp) {
+    successCallBack () {
       const self = this
       NProgress.done()
       Notify({
         message: '连接成功',
         type: 'success'
       })
-      self.stompClient.subscribe('/user' + self.chatTopic, function (response) {
-        console.log(response.body)
+      self.stompClient.subscribe('/topic' + self.chatTopic, function (result) {
+        console.log(result)
       })
     },
 
@@ -124,7 +126,6 @@ export default {
     },
     sendMessage () {
       const self = this
-      console.log(1)
       if (!self.content) {
         Notify({ type: 'warning', message: '你不写点啥。。。。' })
         return
@@ -132,7 +133,8 @@ export default {
       if (self.stompClient && self.stompClient.connected) {
         const tx = self.stompClient.begin()
         const commonHeader = {
-          transaction: tx.id
+          transaction: tx.id,
+          uuid:self.uuid
         }
         self.stompClient.send(
           self.chatTopic,
