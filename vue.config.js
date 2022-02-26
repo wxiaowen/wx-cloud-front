@@ -19,7 +19,6 @@ module.exports = {
   productionSourceMap: true,
  chainWebpack: (config) => {
     config.resolve.alias
-      .set('vue$', 'vue/dist/vue.esm.js')
       .set('@', path.resolve(__dirname, './src'))
   },
   // use thread-loader for babel & TS in production build
@@ -36,11 +35,13 @@ module.exports = {
    open: false,
    host: '0.0.0.0',//如果是真机测试，就使用这个IP
    port: 7080,
+   disableHostCheck: true,  
    https: false,
    hotOnly: true,
    proxy: {
     "/ws": {
-      target: "http://192.168.31.103:8082",
+      secure: false,
+      target: "https://wx-cloud-1570998-1309334981.ap-shanghai.run.tcloudbase.com",
       ws: false,
         pathRewrite: { "^/ws": "" },
       changeOrigin: true,
